@@ -23,7 +23,7 @@ public class Grid {
 			grid[r][c] = player;
 			horizontal[player-1][r]++;
 			vertical[player-1][c]++;
-			if (horizontal[player-1][r] == 3 || horizontal[player-1][r] == 3) {
+			if (horizontal[player-1][r] == 3 || vertical[player-1][r] == 3) {
 				winner[player-1] = true;
 			}
 			if (r == c) {
