@@ -5,7 +5,7 @@ public class Grid {
 	private int[][] vertical;
 	private int[][] diagonal;
 	private boolean[] winner;
-	// 0 = empty, 1 = player, 2 = computer
+	// 0 = empty, 1 = player 1, 2 = player 2
 	public Grid() {
 		grid = new int[3][3];
 		horizontal = new int[2][3];
