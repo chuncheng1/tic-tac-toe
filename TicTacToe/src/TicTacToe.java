@@ -1,5 +1,6 @@
 /*
  * Author: Chun Cheng
+ * 
  * The main class
  * The program is run from here. 
  */
@@ -7,48 +8,6 @@
 import java.util.*;
 
 public class TicTacToe {
-	
-		public static void placeChoice(Grid grid) {
-			Random rand = new Random();
-			int[] corners = {1, 3, 7, 9}; 
-			int[] sides = {2, 4, 6, 8};
-			int position = 5;
-			boolean placeResult = grid.place(2, position);
-			if (placeResult == true) {
-				return;
-			} else {
-					int[] priority = grid.getPriority(2);
-					if (priority != null) {
-						grid.place(2, priority[0], priority[1]);
-					} else {
-						priority = grid.getPriority(1);
-						if (priority != null) {
-							grid.place(2, priority[0], priority[1]);
-						} else {
-							Set<Integer> hs = new HashSet<Integer>();
-							int i=0;
-							do {
-								do {
-									position = corners[rand.nextInt(4)];
-								} while (! hs.add(position));
-								placeResult = grid.place(2, position);
-								i++;
-							} while (! placeResult && i<corners.length);
-							
-							if (! placeResult) {
-								i=0;
-								do {
-									do {
-										position = sides[rand.nextInt(4)];
-									} while (! hs.add(position));
-									placeResult = grid.place(2, position);
-									i++;
-								} while (! placeResult && i<sides.length);
-							}
-						}
-					}
-			}
-		}
 
 		public static void main(String[] args) {
 
@@ -81,10 +40,14 @@ public class TicTacToe {
 						Random rand = new Random();
 						int whoFirst = rand.nextInt(2);
 						int position;
+						int r;
+						int c;
 						if (whoFirst == 1) {
 							System.out.println("I'll go first");
-							position = rand.nextInt(9)+1;
-							grid.place(2, position);
+							position = (rand.nextInt(5)+1)*2-1;
+							r = 2 - (position-1)/3;
+							c = (position-1)%3;
+							grid.place(2, r, c);
 							count++;
 						} else {
 							System.out.println("You're first.");
@@ -94,7 +57,9 @@ public class TicTacToe {
 								grid.printGrid();
 								System.out.print("Enter your choice: ");
 								position = scan.nextInt();
-							} while (! grid.place(1, position));
+								r = 2 - (position-1)/3;
+								c = (position-1)%3;
+							} while (! grid.place(1, r, c));
 							count++;
 							
 							if (grid.scanGrid() == 1) {
@@ -102,10 +67,21 @@ public class TicTacToe {
 								System.out.println("You won!");
 								continue;
 							}
+							if (count == 9) {
+								break;
+							}
 							
-							do {
-								position = rand.nextInt(9)+1;
-							} while (! grid.place(2, position));
+							if (! Player.priorityCheck(grid, 2)) {
+								boolean placeResult;
+								int i=0;
+								do {
+									position = rand.nextInt(9)+1;
+									r = 2 - (position-1)/3;
+									c = (position-1)%3;
+									placeResult = grid.place(2, r, c);
+									i++;
+								} while (! placeResult && i<9);
+							}
 							count++;
 							
 							if (grid.scanGrid() == 2) {
@@ -115,11 +91,11 @@ public class TicTacToe {
 							}
 						}
 						
-						if (grid.scanGrid() == 0 && count >= 9) {
+						if (grid.scanGrid() == 0) {
 							grid.printGrid();
 							System.out.println("It's a tie!");
-							continue;
 						}
+						continue;
 						
 					} else if (choice == 2) {
 						System.out.println();
@@ -133,9 +109,11 @@ public class TicTacToe {
 						Random rand = new Random();
 						int whoFirst = rand.nextInt(2);
 						int position;
+						int r;
+						int c;
 						if (whoFirst == 1) {
 							System.out.println("I'll go first");
-							placeChoice(grid);
+							Player.placeChoice(grid, 2, whoFirst);
 							count++;
 						} else {
 							System.out.println("You're first.");
@@ -145,7 +123,9 @@ public class TicTacToe {
 								grid.printGrid();
 								System.out.print("Enter your choice: ");
 								position = scan.nextInt();
-							} while (! grid.place(1, position));
+								r = 2 - (position-1)/3;
+								c = (position-1)%3;
+							} while (! grid.place(1, r, c));
 							count++;
 							
 							if (grid.scanGrid() == 1) {
@@ -153,8 +133,11 @@ public class TicTacToe {
 								System.out.println("You won!");
 								continue;
 							}
+							if (count == 9) {
+								break;
+							}
 							
-							placeChoice(grid);
+							Player.placeChoice(grid, 2, whoFirst);
 							count++;
 							
 							if (grid.scanGrid() == 2) {
@@ -164,11 +147,11 @@ public class TicTacToe {
 							}
 						}
 						
-						if (grid.scanGrid() == 0 && count >= 9) {
+						if (grid.scanGrid() == 0) {
 							grid.printGrid();
-							System.out.println("It's a tie!");
-							continue;
+							System.out.println("It's a tie!");	
 						}
+						continue;
 					} else if (choice == 3) {
 						System.out.println();
 						System.out.println("Please indicate the position you choose according to this number pad: ");
@@ -181,13 +164,17 @@ public class TicTacToe {
 						Random rand = new Random();
 						int whoFirst = rand.nextInt(2);
 						int position;
+						int r;
+						int c;
 						if (whoFirst == 1) {
 							System.out.println("Player 2 is first.");
 							do {
 								grid.printGrid();
 								System.out.print("Player 2's turn. Enter your choice: ");
 								position = scan.nextInt();
-							} while (! grid.place(2, position));
+								r = 2 - (position-1)/3;
+								c = (position-1)%3;
+							} while (! grid.place(2, r, c));
 							count++;
 						} else {
 							System.out.println("Player 1 is first.");
@@ -197,7 +184,9 @@ public class TicTacToe {
 								grid.printGrid();
 								System.out.print("Player 1's turn. Enter your choice: ");
 								position = scan.nextInt();
-							} while (! grid.place(1, position));
+								r = 2 - (position-1)/3;
+								c = (position-1)%3;
+							} while (! grid.place(1, r, c));
 							count++;
 							
 							if (grid.scanGrid() == 1) {
@@ -206,11 +195,17 @@ public class TicTacToe {
 								continue;
 							}
 							
+							if (count == 9) {
+								break;
+							}
+							
 							do {
 								grid.printGrid();
 								System.out.print("Player 2's turn. Enter your choice: ");
 								position = scan.nextInt();
-							} while (! grid.place(2, position));
+								r = 2 - (position-1)/3;
+								c = (position-1)%3;
+							} while (! grid.place(2, r, c));
 							count++;
 							
 							if (grid.scanGrid() == 2) {
@@ -220,11 +215,11 @@ public class TicTacToe {
 							}
 						}
 						
-						if (grid.scanGrid() == 0 && count >= 9) {
+						if (grid.scanGrid() == 0) {
 							grid.printGrid();
 							System.out.println("It's a tie!");
-							continue;
 						}
+						continue;
 					} else {
 						System.out.println("You have entered an invalid input");
 						continue;
